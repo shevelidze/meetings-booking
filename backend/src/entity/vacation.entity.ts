@@ -8,10 +8,10 @@ export class Vacation {
     id: number
 
     @Column()
-    starting_date: Date;
+    startingDate: Date;
 
     @Column()
-    finishing_date: Date;
+    finishingDate: Date;
 
     @ManyToOne(() => User)
     user: User;

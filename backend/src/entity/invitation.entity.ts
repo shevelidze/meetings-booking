@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import { User } from './user.entity';
 import { Language } from './language.entity';
-import { SlotType } from './slot_type.entity';
+import { SlotType } from './slot-type.entity';
 
 @Entity()
 export class Invitation {

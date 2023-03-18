@@ -5,21 +5,21 @@ import { SlotType } from './slot-type.entity';
 
 @Entity()
 export class SlotRule {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    slotCount: number;
+  @Column()
+  slotCount: number;
 
-    @Column()
-    time: number;
+  @Column()
+  time: number;
 
-    @Column()
-    daysOfWeekIndexes: number[];
+  @Column({ type: 'int', array: true })
+  daysOfWeekIndexes: number[];
 
-    @ManyToOne(() => User)
-    user: User;
+  @ManyToOne(() => User)
+  user: User;
 
-    @ManyToOne(() => SlotType)
-    slotType: SlotType;
+  @ManyToOne(() => SlotType)
+  slotType: SlotType;
 }

@@ -5,9 +5,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { databaseConfig } from './common/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig)],
+  imports: [TypeOrmModule.forRoot(databaseConfig), AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

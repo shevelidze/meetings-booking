@@ -7,8 +7,8 @@ export class User {
   @PrimaryColumn()
   email: string;
 
-  @Column()
-  passwordHash: number;
+  @Column({ type: 'varchar', length: 44 })
+  passwordHash: string;
 
   @Column()
   firstName: string;

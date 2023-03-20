@@ -9,7 +9,7 @@ export class SlotRule {
   id: number;
 
   @Column()
-  slotCount: number;
+  slotsCount: number;
 
   @Column()
   time: number;

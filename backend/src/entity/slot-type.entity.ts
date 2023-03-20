@@ -1,18 +1,22 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import { Language } from './language.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class SlotType {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    duration: number;
+  @Column()
+  duration: number;
 
-    @ManyToOne(() => Language)
-    language: Language;
+  @ManyToOne(() => Language)
+  defaultLanguage: Language;
+
+  @ManyToOne(() => Language)
+  user: User;
 }

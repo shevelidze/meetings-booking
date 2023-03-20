@@ -22,13 +22,13 @@ export class AuthGuard implements CanActivate {
 
   public canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest() as Request;
-    const isAuthorizationRequired =
+    const isPublic =
       this.reflector.get<boolean | undefined>(
-        'isAuthorizationRequired',
+        'isPublic',
         context.getHandler(),
       ) || false;
 
-    if (!isAuthorizationRequired) {
+    if (isPublic) {
       return true;
     }
 
@@ -48,7 +48,12 @@ export class AuthGuard implements CanActivate {
     const requestAccessToken = requestAuthorizationMatch[1];
 
     try {
-      jwt.verify(requestAccessToken, this.authOptions.jwtSecret);
+      (request as any).userEmail = (
+        jwt.verify(
+          requestAccessToken,
+          this.authOptions.jwtSecret,
+        ) as jwt.JwtPayload
+      ).email;
     } catch (e) {
       if (e instanceof jwt.JsonWebTokenError) {
         return false;

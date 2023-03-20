@@ -7,7 +7,7 @@ export class User {
   @PrimaryColumn()
   email: string;
 
-  @Column({ type: 'varchar', length: 44 })
+  @Column({ type: 'varchar', length: 64 })
   passwordHash: string;
 
   @Column()

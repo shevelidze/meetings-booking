@@ -8,6 +8,7 @@ import { User } from 'src/entity';
 
 import { AUTH_OPTIONS } from './auth.constants';
 import { AuthOptions } from './types';
+import { InvalidUserEmailException } from './exceptions';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +37,16 @@ export class AuthService {
     });
   }
 
+  public async getUserOrThrow(email: string) {
+    const possibleInstance = await this.userRepository.findOneBy({ email });
+
+    if (possibleInstance === null) {
+      throw new InvalidUserEmailException();
+    }
+
+    return possibleInstance;
+  }
+
   private generateAccessToken(payload: object) {
     return jwt.sign(payload, this.authOption.jwtSecret, {
       expiresIn: this.authOption.jwtTokenExpiresIn,
@@ -43,6 +54,6 @@ export class AuthService {
   }
 
   private generatePasswordHash(password: string) {
-    return crypto.createHash('sha256').update(password).digest('base64');
+    return crypto.createHash('sha256').update(password).digest('hex');
   }
 }

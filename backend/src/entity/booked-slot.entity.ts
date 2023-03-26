@@ -4,18 +4,18 @@ import { SlotRule } from './slot-rule.entity';
 
 @Entity()
 export class BookedSlot {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    bookerEmail: string;
+  @Column()
+  bookerEmail: string;
 
-    @Column()
-    date: Date;
+  @Column()
+  date: Date;
 
-    @Column()
-    slotIndex: number;
+  @Column()
+  slotIndex: number;
 
-    @ManyToOne(() => SlotRule)
-    slotRule: SlotRule;
+  @ManyToOne(() => SlotRule)
+  slotRule: SlotRule;
 }

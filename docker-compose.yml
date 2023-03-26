@@ -22,6 +22,8 @@ services:
             - ./frontend/src:/app/src
         depends_on:
             - backend
+        environment:
+            - VITE_BACKEND_BASE_URL=http://localhost:${BACKEND_PORT}
 
     db:
         image: postgres:14.2-alpine

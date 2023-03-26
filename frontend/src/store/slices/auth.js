@@ -69,6 +69,13 @@ export function login(email, password) {
   };
 }
 
+export function logout() {
+  return async (dispatch) => {
+    sessionService.clearAccessToken();
+    dispatch(unauthorized());
+  };
+}
+
 export function selectAuth(state) {
   return state.auth;
 }

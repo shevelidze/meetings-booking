@@ -10,8 +10,11 @@ import { store } from './store';
 import { restoreSession } from './store/slices/auth';
 
 import Authorized from './components/common/Authorized';
+import App from './components/App/App';
 import Login from './pages/Login';
-import Home from './pages/Home';
+import Schedule from './pages/Schedule';
+import Settings from './pages/Settings';
+import Vacations from './pages/Vacations';
 
 const router = createBrowserRouter([
   {
@@ -20,7 +23,21 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Home />,
+        element: <App />,
+        children: [
+          {
+            path: '/schedule',
+            element: <Schedule />,
+          },
+          {
+            path: '/settings',
+            element: <Settings />,
+          },
+          {
+            path: '/vacations',
+            element: <Vacations />,
+          },
+        ],
       },
     ],
   },

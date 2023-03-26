@@ -32,4 +32,12 @@ export class AuthController {
       accessToken: possibleAccessToken,
     };
   }
+
+  @HttpCode(200)
+  @Post('check_session')
+  checkSession() {
+    return {
+      message: 'Success! Your session is valid!',
+    };
+  }
 }

@@ -23,21 +23,28 @@ export class SlotTypeService {
     const instance = this.slotTypeRepository.create(creation);
 
     [instance.defaultLanguage, instance.user] = await Promise.all([
-      this.languageService.getOrThrow(creation.defaultLanguageId),
+      typeof creation.defaultLanguageId === 'number'
+        ? this.languageService.getOrThrow(creation.defaultLanguageId)
+        : null,
       this.authService.getUserOrThrow(userEmail),
     ]);
 
-    return await this.slotTypeRepository.save(instance);
+    return this.deleteSensitiveDataFromInstance(
+      await this.slotTypeRepository.save(instance),
+    );
   }
 
   public async getAllOwnedByUser(userEmail: string) {
-    return await this.slotTypeRepository.find({
-      where: {
-        user: {
-          email: userEmail,
+    return (
+      await this.slotTypeRepository.find({
+        relations: ['defaultLanguage'],
+        where: {
+          user: {
+            email: userEmail,
+          },
         },
-      },
-    });
+      })
+    ).map((mapInstance) => this.deleteSensitiveDataFromInstance(mapInstance));
   }
 
   public async updateIfUserOwns(
@@ -57,9 +64,10 @@ export class SlotTypeService {
     Object.assign(possibleInstance, pick(update, 'duration', 'name'));
 
     if (update.defaultLanguageId !== undefined) {
-      possibleInstance.defaultLanguage = await this.languageService.getOrThrow(
-        update.defaultLanguageId,
-      );
+      possibleInstance.defaultLanguage =
+        update.defaultLanguageId !== null
+          ? await this.languageService.getOrThrow(update.defaultLanguageId)
+          : null;
     }
 
     await this.slotTypeRepository.save(possibleInstance);
@@ -90,5 +98,13 @@ export class SlotTypeService {
     }
 
     return possibleInstance;
+  }
+
+  public deleteSensitiveDataFromInstance(instance: SlotType) {
+    if ('user' in instance) {
+      delete (instance as any).user;
+    }
+
+    return instance;
   }
 }

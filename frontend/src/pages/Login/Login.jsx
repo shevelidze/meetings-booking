@@ -49,6 +49,7 @@ function Login() {
           onSubmit={(values) => {
             dispatch(login(values.email, values.password));
           }}
+          validateOnMount
         >
           {({ isValid, errors }) => (
             <Form>

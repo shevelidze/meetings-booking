@@ -14,9 +14,12 @@ export class SlotType {
   @Column()
   duration: number;
 
-  @ManyToOne(() => Language)
-  defaultLanguage: Language;
+  @ManyToOne(() => Language, { nullable: true })
+  defaultLanguage: Language | null;
 
-  @ManyToOne(() => Language)
+  @Column()
+  color: string;
+
+  @ManyToOne(() => User)
   user: User;
 }

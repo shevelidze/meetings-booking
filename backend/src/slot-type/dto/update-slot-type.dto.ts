@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsInt, IsPositive } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  IsPositive,
+  IsHexColor,
+} from 'class-validator';
 
 import { ValidateIfDefined } from 'src/common/decorators';
 
@@ -8,14 +14,18 @@ export class UpdateSlotTypeDto implements SlotTypeUpdate {
   @ValidateIfDefined()
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name?: string;
 
   @ValidateIfDefined()
   @IsInt()
   @IsPositive()
-  duration: number;
+  duration?: number;
 
   @ValidateIfDefined()
   @IsInt()
-  defaultLanguageId: number;
+  defaultLanguageId?: number;
+
+  @ValidateIfDefined()
+  @IsHexColor()
+  color?: string;
 }

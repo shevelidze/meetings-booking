@@ -32,7 +32,7 @@ export class SlotRuleController {
   }
 
   @Patch(':id')
-  async updateOne(
+  async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateSlotRuleDto: UpdateSlotRuleDto,
     @UserEmail() userEmail: string,
@@ -45,7 +45,7 @@ export class SlotRuleController {
   }
 
   @Delete(':id')
-  async deleteOne(
+  async delete(
     @Param('id', new ParseIntPipe()) id: number,
     @UserEmail() userEmail: string,
   ) {

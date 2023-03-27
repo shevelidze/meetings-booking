@@ -12,10 +12,10 @@ export class CreateSlotRuleDto implements SlotRuleCreation {
   time: number;
 
   @IsArray()
-  @IsInt()
-  @Min(0)
-  @Max(6)
-  daysOfWeekIndexes: number[];
+  @IsInt({ each: true })
+  @Min(0, { each: true })
+  @Max(6, { each: true })
+  dayOfWeekIndexes: number[];
 
   @IsInt()
   slotTypeId: number;

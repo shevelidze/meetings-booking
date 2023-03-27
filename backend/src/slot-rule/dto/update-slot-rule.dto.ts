@@ -20,7 +20,7 @@ export class UpdateSlotRuleDto implements SlotRuleUpdate {
   @IsInt()
   @Min(0)
   @Max(6)
-  daysOfWeekIndexes?: number[];
+  dayOfWeekIndexes?: number[];
 
   @ValidateIfDefined()
   @IsInt()

@@ -20,7 +20,7 @@ export class SlotRuleService {
 
   public async create(creation: SlotRuleCreation, userEmail: string) {
     const instance = this.slotRuleRepository.create(
-      pick(creation, 'daysOfWeekIndexes', 'slotsCount', 'time'),
+      pick(creation, 'dayOfWeekIndexes', 'slotsCount', 'time'),
     );
 
     [instance.slotType, instance.user] = await Promise.all([
@@ -28,17 +28,22 @@ export class SlotRuleService {
       this.authService.getUserOrThrow(userEmail),
     ]);
 
-    return await this.slotRuleRepository.save(instance);
+    return this.deleteSensitiveDataFromInstance(
+      await this.slotRuleRepository.save(instance),
+    );
   }
 
   public async getAllOwnedByUser(userEmail: string) {
-    return await this.slotRuleRepository.find({
-      where: {
-        user: {
-          email: userEmail,
+    return (
+      await this.slotRuleRepository.find({
+        relations: ['slotType'],
+        where: {
+          user: {
+            email: userEmail,
+          },
         },
-      },
-    });
+      })
+    ).map((mapInstance) => this.deleteSensitiveDataFromInstance(mapInstance));
   }
 
   public async updateIfUserOwns(
@@ -57,7 +62,7 @@ export class SlotRuleService {
 
     Object.assign(
       possibleInstance,
-      pick(update, 'daysOfWeekIndexes', 'slotsCount', 'time'),
+      pick(update, 'dayOfWeekIndexes', 'slotsCount', 'time'),
     );
 
     if (update.slotTypeId !== undefined) {
@@ -76,5 +81,13 @@ export class SlotRuleService {
         email: userEmail,
       },
     });
+  }
+
+  public deleteSensitiveDataFromInstance(instance: SlotRule) {
+    if ('user' in instance) {
+      delete (instance as any).user;
+    }
+
+    return instance;
   }
 }

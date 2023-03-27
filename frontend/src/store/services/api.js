@@ -8,7 +8,7 @@ export const apiService = {
       ...init,
       headers: {
         Authorization: `Bearer ${sessionService.getAccessToken()}`,
-        ...init.headers,
+        ...init?.headers,
       },
     });
   },

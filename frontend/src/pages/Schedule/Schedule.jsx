@@ -2,28 +2,26 @@ import { useEffect } from 'react';
 import { HStack, Stack } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 
-import GhostIconButton from '@/components/common/GhostIconButton';
 import { loadSlotTypes } from '@/store/slices/slotTypes';
+import { loadSlotRules } from '@/store/slices/slotRules';
 
 import ScheduleCard from './ScheduleCard/ScheduleCard';
 import SlotTypesScheduleCard from './SlotTypesScheduleCard';
+import SlotRulesScheduleCard from './SlotRulesScheduleCard';
 
 export default function Schedule() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(loadSlotTypes());
+    dispatch(loadSlotRules());
   });
 
   return (
     <HStack spacing={8} h='full' alignItems='flex-start'>
       <Stack spacing={8} w='lg'>
         <SlotTypesScheduleCard />
-        <ScheduleCard display='flex' flexGrow={1} flexDirection='column'>
-          {/* <GhostIconButton icon={<AddIcon />} alignSelf='center'>
-            Add a slot rule
-          </GhostIconButton> */}
-        </ScheduleCard>
+        <SlotRulesScheduleCard />
       </Stack>
       <ScheduleCard
         display='flex'

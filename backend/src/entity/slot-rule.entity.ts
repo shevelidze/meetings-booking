@@ -15,7 +15,7 @@ export class SlotRule {
   time: number;
 
   @Column({ type: 'int', array: true })
-  daysOfWeekIndexes: number[];
+  dayOfWeekIndexes: number[];
 
   @ManyToOne(() => User)
   user: User;

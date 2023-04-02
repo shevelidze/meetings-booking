@@ -1,0 +1,8 @@
+.calendarSlot.short:not(:hover) > * {
+  display: none;
+}
+
+.calendarSlot.short:hover {
+  z-index: 9999;
+  height: var(--chakra-sizes-3xs);
+}

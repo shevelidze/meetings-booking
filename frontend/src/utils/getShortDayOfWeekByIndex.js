@@ -1,5 +1,9 @@
-const SHORT_DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 export function getShortDateOfWeekByIndex(index) {
-  return SHORT_DAYS_OF_WEEK[index];
+  const dateObject = new Date();
+
+  dateObject.setDate(dateObject.getDate() + dateObject.getDay() - index);
+
+  return dateObject.toLocaleDateString('default', {
+    weekday: 'short',
+  });
 }

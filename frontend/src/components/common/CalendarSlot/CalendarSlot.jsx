@@ -25,7 +25,7 @@ export default function CalendarSlot({ dateObject, duration, ...props }) {
 
   const classList = [classes.calendarSlot];
 
-  if (duration < 15) {
+  if (duration < 30) {
     classList.push(classes.short);
   }
 

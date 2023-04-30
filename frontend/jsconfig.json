@@ -3,6 +3,9 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-    }
-  }
+    },
+    "lib": ["dom", "es2015"],
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*.js"]
 }

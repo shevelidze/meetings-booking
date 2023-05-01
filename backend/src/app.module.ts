@@ -6,6 +6,8 @@ import { databaseConfig } from './common/config';
 import { AuthModule } from './auth';
 import { SlotRuleModule } from './slot-rule';
 import { SlotTypeModule } from './slot-type';
+import { UserModule } from './user';
+
 
 @Module({
   imports: [
@@ -13,6 +15,7 @@ import { SlotTypeModule } from './slot-type';
     AuthModule,
     SlotRuleModule,
     SlotTypeModule,
+    UserModule
   ],
 })
 export class AppModule {}

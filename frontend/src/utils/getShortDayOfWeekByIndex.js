@@ -3,7 +3,7 @@ export function getShortDateOfWeekByIndex(index) {
 
   dateObject.setDate(dateObject.getDate() - dateObject.getDay() + index);
 
-  return dateObject.toLocaleDateString('default', {
+  return dateObject.toLocaleDateString('en-US', {
     weekday: 'short',
   });
 }

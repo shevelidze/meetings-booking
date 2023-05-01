@@ -37,7 +37,7 @@ export class SlotTypeController {
     @Body() updateSlotTypeDto: UpdateSlotTypeDto,
     @UserEmail() userEmail: string,
   ) {
-    await this.slotTypeService.updateIfUserOwns(
+    return await this.slotTypeService.updateIfUserOwns(
       id,
       updateSlotTypeDto,
       userEmail,

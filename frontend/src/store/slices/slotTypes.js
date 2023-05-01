@@ -50,6 +50,38 @@ export function createSlotType(creation) {
   };
 }
 
+export function deleteSlotType(id) {
+  return async (dispatch, getState) => {
+    dispatch(slotTypesPending());
+
+    await slotTypeService.delete(id);
+
+    dispatch(
+      slotTypesLoaded(
+        selectSlotTypes(getState()).value.filter(
+          (filterSlotType) => filterSlotType.id !== id
+        )
+      )
+    );
+  };
+}
+
+export function updateSlotType(id, update) {
+  return async (dispatch, getState) => {
+    dispatch(slotTypesPending());
+
+    const updatedSlotType = await slotTypeService.update(id, update);
+
+    dispatch(
+      slotTypesLoaded(
+        selectSlotTypes(getState()).value.map((mapSlotType) => {
+          return mapSlotType.id !== id ? mapSlotType : updatedSlotType;
+        })
+      )
+    );
+  };
+}
+
 export function selectSlotTypes(state) {
   return state.slotTypes;
 }

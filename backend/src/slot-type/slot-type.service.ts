@@ -52,7 +52,10 @@ export class SlotTypeService {
     update: SlotTypeUpdate,
     userEmail: string,
   ) {
-    const possibleInstance = await this.slotTypeRepository.findOneBy({ id });
+    const possibleInstance = await this.slotTypeRepository.findOne({
+      relations: ['user'],
+      where: { id },
+    });
 
     if (
       possibleInstance === null ||
@@ -61,7 +64,7 @@ export class SlotTypeService {
       return;
     }
 
-    Object.assign(possibleInstance, pick(update, 'duration', 'name'));
+    Object.assign(possibleInstance, pick(update, 'duration', 'name', 'color'));
 
     if (update.defaultLanguageId !== undefined) {
       possibleInstance.defaultLanguage =
@@ -70,7 +73,7 @@ export class SlotTypeService {
           : null;
     }
 
-    await this.slotTypeRepository.save(possibleInstance);
+    return await this.slotTypeRepository.save(possibleInstance);
   }
 
   public async deleteIfUserOwns(id: number, userEmail: string) {

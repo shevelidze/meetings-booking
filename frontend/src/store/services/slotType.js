@@ -29,6 +29,8 @@ export const slotTypeService = {
     if (!response.ok) {
       throw new Error('Failed to update a slot type.');
     }
+
+    return await response.json();
   },
   async delete(id) {
     const response = await apiService.fetchJson('DELETE', `/slot_type/${id}`);

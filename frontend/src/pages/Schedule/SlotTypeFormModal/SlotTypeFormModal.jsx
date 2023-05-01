@@ -49,6 +49,7 @@ export default function SlotTypeFormModal({
             onSubmit(values);
             resetForm();
           }}
+          enableReinitialize
         >
           {({ isValid, values, setFieldValue, errors }) => (
             <Form>

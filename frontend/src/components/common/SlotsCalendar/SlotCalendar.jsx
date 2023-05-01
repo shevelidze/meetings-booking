@@ -47,7 +47,7 @@ export default function SlotCalendar({ children, ...props }) {
       <Flex flexDirection='column' {...props}>
         <Flex justifyContent='space-between' alignItems='center'>
           <Text fontWeight='bold' fontSize='4xl'>
-            {shownDateObject.toLocaleDateString([], {
+            {shownDateObject.toLocaleDateString('en-US', {
               month: 'long',
             })}{' '}
             {shownDateObject.getFullYear()}

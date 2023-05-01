@@ -51,7 +51,10 @@ export class SlotRuleService {
     update: SlotRuleUpdate,
     userEmail: string,
   ) {
-    const possibleInstance = await this.slotRuleRepository.findOneBy({ id });
+    const possibleInstance = await this.slotRuleRepository.findOne({
+      relations: ['user'],
+      where: { id },
+    });
 
     if (
       possibleInstance === null ||
@@ -71,7 +74,7 @@ export class SlotRuleService {
       );
     }
 
-    await this.slotRuleRepository.save(possibleInstance);
+    return await this.slotRuleRepository.save(possibleInstance);
   }
 
   public async deleteIfUserOwns(id: number, userEmail: string) {

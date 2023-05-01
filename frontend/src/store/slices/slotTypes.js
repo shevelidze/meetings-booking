@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { slotTypeService } from '@/store/services';
+import { loadSlotRules } from './slotRules';
 
 const slotTypesSlice = createSlice({
   name: 'slotTypes',
@@ -63,6 +64,8 @@ export function deleteSlotType(id) {
         )
       )
     );
+
+    dispatch(loadSlotRules());
   };
 }
 
@@ -79,6 +82,8 @@ export function updateSlotType(id, update) {
         })
       )
     );
+
+    dispatch(loadSlotRules());
   };
 }
 

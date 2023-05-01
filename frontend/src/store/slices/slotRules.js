@@ -50,6 +50,38 @@ export function createSlotRule(creation) {
   };
 }
 
+export function deleteSlotRule(id) {
+  return async (dispatch, getState) => {
+    dispatch(slotRulesPending());
+
+    await slotRuleService.delete(id);
+
+    dispatch(
+      slotRulesLoaded(
+        selectSlotRules(getState()).value.filter(
+          (filterSlotRule) => filterSlotRule.id !== id
+        )
+      )
+    );
+  };
+}
+
+export function updateSlotRule(id, update) {
+  return async (dispatch, getState) => {
+    dispatch(slotRulesPending());
+
+    const updatedSlotRule = await slotRuleService.update(id, update);
+
+    dispatch(
+      slotRulesLoaded(
+        selectSlotRules(getState()).value.map((mapSlotRule) => {
+          return mapSlotRule.id !== id ? mapSlotRule : updatedSlotRule;
+        })
+      )
+    );
+  };
+}
+
 export function selectSlotRules(state) {
   return state.slotRules;
 }

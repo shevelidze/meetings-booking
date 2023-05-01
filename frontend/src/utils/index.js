@@ -5,3 +5,4 @@ export * from './getDateIsoString';
 export * from './range';
 export * from './getSlotCalendarTimeColumnOffset';
 export * from './getTimeStringFromDateObject';
+export * from './getTimeStringFromTotalMinutes';

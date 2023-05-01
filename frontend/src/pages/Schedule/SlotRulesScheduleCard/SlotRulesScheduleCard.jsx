@@ -3,8 +3,16 @@ import { AddIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { selectSlotTypes } from '@/store/slices/slotTypes';
-import { getTotalMinutesFromTimeString } from '@/utils';
-import { createSlotRule, selectSlotRules } from '@/store/slices/slotRules';
+import {
+  getTimeStringFromTotalMinutes,
+  getTotalMinutesFromTimeString,
+} from '@/utils';
+import {
+  createSlotRule,
+  deleteSlotRule,
+  selectSlotRules,
+  updateSlotRule,
+} from '@/store/slices/slotRules';
 
 import GhostIconButton from '@/components/common/GhostIconButton';
 
@@ -19,13 +27,22 @@ export default function SlotRulesScheduleCard(props) {
   const slotRulesState = useSelector(selectSlotRules);
 
   const [addSlotRuleModalIsOpen, setAddSlotRuleModalIsOpen] = useState(false);
+  const [editedSlotRule, setEditedSlotRule] = useState(null);
 
   return (
     <ScheduleCard display='flex' flexGrow={1} flexDirection='column' {...props}>
       <Stack spacing={8}>
         <Stack spacing={4}>
           {slotRulesState.value.map((mapSlotRule) => (
-            <SlotRuleItem slotRule={mapSlotRule} key={mapSlotRule.id} />
+            <SlotRuleItem
+              slotRule={mapSlotRule}
+              key={mapSlotRule.id}
+              onDeleteClick={() => dispatch(deleteSlotRule(mapSlotRule.id))}
+              onEditClick={() => {
+                setEditedSlotRule(mapSlotRule);
+                setAddSlotRuleModalIsOpen(true);
+              }}
+            />
           ))}
         </Stack>
         <GhostIconButton
@@ -38,26 +55,47 @@ export default function SlotRulesScheduleCard(props) {
       </Stack>
       <SlotRuleFormModal
         initialValues={{
-          time: '',
-          dayOfWeekIndexes: [0, 1, 2, 3, 4],
-          slotTypeId: String(slotTypesState.value[0]?.id),
-          slotsCount: '',
+          time:
+            editedSlotRule !== null
+              ? getTimeStringFromTotalMinutes(editedSlotRule.time)
+              : '',
+          dayOfWeekIndexes: editedSlotRule?.dayOfWeekIndexes || [0, 1, 2, 3, 4],
+          slotTypeId:
+            editedSlotRule !== null
+              ? String(editedSlotRule.slotType.id)
+              : String(slotTypesState.value[0]?.id),
+          slotsCount:
+            editedSlotRule !== null ? String(editedSlotRule.slotsCount) : '',
         }}
         isOpen={addSlotRuleModalIsOpen}
         onClose={() => setAddSlotRuleModalIsOpen(false)}
-        headerChildren='Add a new slot rule'
+        headerChildren={
+          editedSlotRule !== null ? 'Edit a slot rule' : 'Add a new slot rule'
+        }
         submitButtonChildren='Submit'
         onSubmit={(values) => {
           setAddSlotRuleModalIsOpen(false);
 
-          dispatch(
-            createSlotRule({
-              dayOfWeekIndexes: values.dayOfWeekIndexes,
-              slotTypeId: Number(values.slotTypeId),
-              slotsCount: Number(values.slotsCount),
-              time: getTotalMinutesFromTimeString(values.time),
-            })
-          );
+          if (editedSlotRule !== null) {
+            setEditedSlotRule(null);
+            dispatch(
+              updateSlotRule(editedSlotRule.id, {
+                dayOfWeekIndexes: values.dayOfWeekIndexes,
+                slotTypeId: Number(values.slotTypeId),
+                slotsCount: Number(values.slotsCount),
+                time: getTotalMinutesFromTimeString(values.time),
+              })
+            );
+          } else {
+            dispatch(
+              createSlotRule({
+                dayOfWeekIndexes: values.dayOfWeekIndexes,
+                slotTypeId: Number(values.slotTypeId),
+                slotsCount: Number(values.slotsCount),
+                time: getTotalMinutesFromTimeString(values.time),
+              })
+            );
+          }
         }}
       />
     </ScheduleCard>

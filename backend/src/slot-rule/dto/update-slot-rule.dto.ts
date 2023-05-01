@@ -17,9 +17,9 @@ export class UpdateSlotRuleDto implements SlotRuleUpdate {
 
   @ValidateIfDefined()
   @IsArray()
-  @IsInt()
-  @Min(0)
-  @Max(6)
+  @IsInt({ each: true })
+  @Min(0, { each: true })
+  @Max(6, { each: true })
   dayOfWeekIndexes?: number[];
 
   @ValidateIfDefined()

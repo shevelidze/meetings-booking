@@ -19,6 +19,24 @@ export const slotRuleService = {
 
     return await response.json();
   },
-  async update() {},
-  async delete() {},
+  async update(id, update) {
+    const response = await apiService.fetchJson(
+      'PATCH',
+      `/slot_rule/${id}`,
+      update
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to update a slot rule.');
+    }
+
+    return await response.json();
+  },
+  async delete(id) {
+    const response = await apiService.fetchJson('DELETE', `/slot_rule/${id}`);
+
+    if (!response.ok) {
+      throw new Error('Failed to delete a slot rule.');
+    }
+  },
 };

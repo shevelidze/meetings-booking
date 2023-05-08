@@ -106,6 +106,10 @@ export default function SlotCalendar({ children, ...props }) {
                 gridColumn={mapDateObject.getDay() + 2}
                 gridRow={1}
                 key={mapDateObject.toString()}
+                position='sticky'
+                top={0}
+                bg='white'
+                zIndex={20}
               >
                 <Text textAlign='center'>
                   {getShortDateOfWeekByIndex(mapDateObject.getDay())}

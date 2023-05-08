@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { HStack, Stack, Text } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
+import { v4 as uuidV4 } from 'uuid';
 
 import { loadSlotTypes } from '@/store/slices/slotTypes';
 import { loadSlotRules, selectSlotRules } from '@/store/slices/slotRules';
@@ -11,7 +12,11 @@ import CalendarSlot from '@/components/common/CalendarSlot';
 import ScheduleCard from './ScheduleCard/ScheduleCard';
 import SlotTypesScheduleCard from './SlotTypesScheduleCard';
 import SlotRulesScheduleCard from './SlotRulesScheduleCard';
-import { getTimeStringFromDateObject } from '@/utils';
+import {
+  getClosestWeekBeginningBefore,
+  getDaysNumberBetweenDateObjects,
+  getTimeStringFromDateObject,
+} from '@/utils';
 
 export default function Schedule() {
   const dispatch = useDispatch();
@@ -36,7 +41,21 @@ export default function Schedule() {
 
             for (const dateObject of shownDateObjects) {
               for (const slotRule of slotRulesState.value) {
-                if (slotRule.dayOfWeekIndexes.includes(dateObject.getDay())) {
+                const slotRuleStartDateObject = new Date(slotRule.startDate);
+                const weekIndex = Math.floor(
+                  getDaysNumberBetweenDateObjects(
+                    getClosestWeekBeginningBefore(slotRuleStartDateObject),
+                    dateObject
+                  ) / 7
+                );
+
+                if (
+                  slotRule.dayOfWeekIndexes.includes(dateObject.getDay()) &&
+                  slotRuleStartDateObject <= dateObject &&
+                  ((slotRule.frequencyWeeksNumber === null &&
+                    weekIndex === 0) ||
+                    weekIndex % slotRule.frequencyWeeksNumber === 0)
+                ) {
                   for (
                     let slotIndex = 0;
                     slotIndex < slotRule.slotsCount;
@@ -56,6 +75,7 @@ export default function Schedule() {
 
                     result.push(
                       <CalendarSlot
+                        key={uuidV4()}
                         index={result.length}
                         bg={slotRule.slotType.color}
                         dateObject={slotStartDateObject}

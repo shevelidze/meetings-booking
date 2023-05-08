@@ -13,6 +13,7 @@ import {
   Stack,
   Input,
   Select,
+  Checkbox,
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -21,6 +22,16 @@ import { useSelector } from 'react-redux';
 import { selectSlotTypes } from '@/store/slices/slotTypes';
 
 import WeekDaysPicker from '@/components/common/WeekDaysPicker';
+
+const frequencyWeeksNumberOptionsNumbers = [1, 2, 3, 4, 8, 16];
+
+const frequencyWeeksNumberOptions = frequencyWeeksNumberOptionsNumbers.map(
+  (mapNumber) => (
+    <option key={mapNumber} value={mapNumber}>
+      Every {mapNumber === 1 ? 'week' : `${mapNumber} weeks`}
+    </option>
+  )
+);
 
 const validationSchema = Yup.object().shape({
   time: Yup.string().required().label('Time'),
@@ -32,6 +43,7 @@ const validationSchema = Yup.object().shape({
     )
     .label('Slots count'),
   dayOfWeekIndexes: Yup.array().required().min(1).label('Slots count'),
+  startDate: Yup.string().required().label('Start date'),
 });
 
 export default function SlotRuleFormModal({
@@ -78,6 +90,41 @@ export default function SlotRuleFormModal({
                     <Field as={Input} name='time' type='time' />
                     <FormErrorMessage>{errors.time}</FormErrorMessage>
                   </FormControl>
+                  <FormControl
+                    isInvalid={errors.startDate !== undefined}
+                    isRequired
+                  >
+                    <FormLabel>Start date</FormLabel>
+                    <Field as={Input} name='startDate' type='date' />
+                    <FormErrorMessage>{errors.startDate}</FormErrorMessage>
+                  </FormControl>
+                  <Checkbox
+                    isChecked={values.frequencyWeeksNumber !== null}
+                    onChange={() =>
+                      setFieldValue(
+                        'frequencyWeeksNumber',
+                        values.frequencyWeeksNumber === null ? 1 : null
+                      )
+                    }
+                  >
+                    Repeat
+                  </Checkbox>
+                  {values.frequencyWeeksNumber !== null && (
+                    <FormControl isRequired>
+                      <FormLabel>Repeat every</FormLabel>
+                      <Select
+                        value={values.frequencyWeeksNumber}
+                        onChange={(e) =>
+                          setFieldValue(
+                            'frequencyWeeksNumber',
+                            parseInt(e.target.value)
+                          )
+                        }
+                      >
+                        {frequencyWeeksNumberOptions}
+                      </Select>
+                    </FormControl>
+                  )}
                   <FormControl
                     isInvalid={errors.slotsCount !== undefined}
                     isRequired

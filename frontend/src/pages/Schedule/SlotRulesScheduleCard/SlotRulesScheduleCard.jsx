@@ -66,6 +66,11 @@ export default function SlotRulesScheduleCard(props) {
               : String(slotTypesState.value[0]?.id),
           slotsCount:
             editedSlotRule !== null ? String(editedSlotRule.slotsCount) : '',
+          startDate: editedSlotRule !== null ? editedSlotRule.startDate : '',
+          frequencyWeeksNumber:
+            editedSlotRule !== null
+              ? editedSlotRule.frequencyWeeksNumber
+              : null,
         }}
         isOpen={addSlotRuleModalIsOpen}
         onClose={() => setAddSlotRuleModalIsOpen(false)}
@@ -84,6 +89,8 @@ export default function SlotRulesScheduleCard(props) {
                 slotTypeId: Number(values.slotTypeId),
                 slotsCount: Number(values.slotsCount),
                 time: getTotalMinutesFromTimeString(values.time),
+                startDate: values.startDate,
+                frequencyWeeksNumber: values.frequencyWeeksNumber,
               })
             );
           } else {
@@ -93,6 +100,8 @@ export default function SlotRulesScheduleCard(props) {
                 slotTypeId: Number(values.slotTypeId),
                 slotsCount: Number(values.slotsCount),
                 time: getTotalMinutesFromTimeString(values.time),
+                startDate: values.startDate,
+                frequencyWeeksNumber: values.frequencyWeeksNumber,
               })
             );
           }

@@ -1,4 +1,12 @@
-import { IsInt, IsPositive, Min, IsArray, Max } from 'class-validator';
+import {
+  IsInt,
+  IsPositive,
+  Min,
+  IsArray,
+  Max,
+  IsDateString,
+  IsOptional,
+} from 'class-validator';
 
 import { SlotRuleCreation } from '../types';
 
@@ -19,4 +27,12 @@ export class CreateSlotRuleDto implements SlotRuleCreation {
 
   @IsInt()
   slotTypeId: number;
+
+  @IsDateString()
+  startDate: string;
+
+  @IsInt()
+  @IsPositive()
+  @IsOptional()
+  frequencyWeeksNumber?: number | null;
 }

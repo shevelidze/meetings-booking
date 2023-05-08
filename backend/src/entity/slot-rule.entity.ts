@@ -17,6 +17,12 @@ export class SlotRule {
   @Column({ type: 'int', array: true })
   dayOfWeekIndexes: number[];
 
+  @Column({ type: 'date' })
+  startDate: string;
+
+  @Column({ type: 'int', nullable: true })
+  frequencyWeeksNumber: number | null;
+
   @ManyToOne(() => User)
   user: User;
 

@@ -6,3 +6,4 @@ export * from './range';
 export * from './getSlotCalendarTimeColumnOffset';
 export * from './getTimeStringFromDateObject';
 export * from './getTimeStringFromTotalMinutes';
+export * from './getDaysNumberBetweenDateObjects';

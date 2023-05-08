@@ -19,9 +19,7 @@ export class SlotRuleService {
   ) {}
 
   public async create(creation: SlotRuleCreation, userEmail: string) {
-    const instance = this.slotRuleRepository.create(
-      pick(creation, 'dayOfWeekIndexes', 'slotsCount', 'time'),
-    );
+    const instance = this.slotRuleRepository.create(creation);
 
     [instance.slotType, instance.user] = await Promise.all([
       this.slotTypeService.getOrThrow(creation.slotTypeId),
@@ -63,10 +61,7 @@ export class SlotRuleService {
       return;
     }
 
-    Object.assign(
-      possibleInstance,
-      pick(update, 'dayOfWeekIndexes', 'slotsCount', 'time'),
-    );
+    Object.assign(possibleInstance, update);
 
     if (update.slotTypeId !== undefined) {
       possibleInstance.slotType = await this.slotTypeService.getOrThrow(

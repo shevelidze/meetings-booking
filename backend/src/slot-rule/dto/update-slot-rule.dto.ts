@@ -1,4 +1,12 @@
-import { IsInt, IsPositive, Min, Max, IsArray } from 'class-validator';
+import {
+  IsInt,
+  IsPositive,
+  Min,
+  Max,
+  IsArray,
+  IsDateString,
+  IsOptional,
+} from 'class-validator';
 
 import { ValidateIfDefined } from 'src/common/decorators';
 
@@ -25,4 +33,13 @@ export class UpdateSlotRuleDto implements SlotRuleUpdate {
   @ValidateIfDefined()
   @IsInt()
   slotTypeId?: number;
+
+  @ValidateIfDefined()
+  @IsDateString()
+  startDate: string;
+
+  @IsInt()
+  @IsPositive()
+  @IsOptional()
+  frequencyWeeksNumber?: number | null;
 }

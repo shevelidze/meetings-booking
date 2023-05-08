@@ -8,14 +8,13 @@ import { SlotRuleModule } from './slot-rule';
 import { SlotTypeModule } from './slot-type';
 import { UserModule } from './user';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
     AuthModule,
     SlotRuleModule,
     SlotTypeModule,
-    UserModule
+    UserModule,
   ],
 })
 export class AppModule {}

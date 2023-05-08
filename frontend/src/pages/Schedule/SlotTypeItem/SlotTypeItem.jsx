@@ -1,8 +1,25 @@
-import { Flex, HStack, IconButton, Text } from '@chakra-ui/react';
+import { useState } from 'react';
+import {
+  Button,
+  Flex,
+  HStack,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+} from '@chakra-ui/react';
 import { BiPencil, BiTrash } from 'react-icons/bi';
 import { Icon } from '@chakra-ui/react';
 
 export default function SlotTypeItem({ slotType, onDeleteClick, onEditClick }) {
+  const [deleteConfirmationModalIsShown, setDeleteConfirmationModalIsShown] =
+    useState(false);
+
   return (
     <Flex
       borderRadius='1rem'
@@ -11,6 +28,7 @@ export default function SlotTypeItem({ slotType, onDeleteClick, onEditClick }) {
       justifyContent='space-between'
       alignItems='center'
       color='white'
+      gap={4}
     >
       <Text fontWeight='bold'>{slotType.name}</Text>
       <HStack>
@@ -27,11 +45,35 @@ export default function SlotTypeItem({ slotType, onDeleteClick, onEditClick }) {
               as={BiTrash}
               color='white'
               boxSize={6}
-              onClick={onDeleteClick}
+              onClick={() => setDeleteConfirmationModalIsShown(true)}
             />
           }
         />
       </HStack>
+
+      <Modal
+        isOpen={deleteConfirmationModalIsShown}
+        onClose={() => setDeleteConfirmationModalIsShown(false)}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm delete</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            Are you sure you want to delete this slot type?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={onDeleteClick}>
+              Delete
+            </Button>
+            <Button onClick={() => setDeleteConfirmationModalIsShown(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }

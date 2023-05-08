@@ -1,8 +1,26 @@
+import { useState } from 'react';
 import { getShortDateOfWeekByIndex } from '@/utils';
-import { Flex, HStack, Icon, IconButton, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+} from '@chakra-ui/react';
 import { BiPencil, BiTrash } from 'react-icons/bi';
 
 export default function SlotRuleItem({ slotRule, onEditClick, onDeleteClick }) {
+  const [deleteConfirmationModalIsShown, setDeleteConfirmationModalIsShown] =
+    useState(false);
+
   return (
     <Flex
       borderRadius='1rem'
@@ -10,6 +28,7 @@ export default function SlotRuleItem({ slotRule, onEditClick, onDeleteClick }) {
       justifyContent='space-between'
       bg='blue.700'
       color='white'
+      gap={4}
     >
       <Text
         fontWeight='bold'
@@ -35,11 +54,35 @@ export default function SlotRuleItem({ slotRule, onEditClick, onDeleteClick }) {
               as={BiTrash}
               color='white'
               boxSize={6}
-              onClick={onDeleteClick}
+              onClick={() => setDeleteConfirmationModalIsShown(true)}
             />
           }
         />
       </HStack>
+
+      <Modal
+        isOpen={deleteConfirmationModalIsShown}
+        onClose={() => setDeleteConfirmationModalIsShown(false)}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm delete</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            Are you sure you want to delete this slot rule?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={onDeleteClick}>
+              Delete
+            </Button>
+            <Button onClick={() => setDeleteConfirmationModalIsShown(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }

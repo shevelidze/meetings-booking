@@ -10,20 +10,37 @@ import {
   AlertIcon,
   AlertDescription,
   Grid,
+  Flex,
+  Stack,
 } from '@chakra-ui/react';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  LabelList,
+  BarChart,
+  Bar,
+  YAxis,
+} from 'recharts';
 import { loadUser, updateUser } from '../../store/slices/user';
 import { loadSlotRules, selectSlotRules } from '@/store/slices/slotRules';
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+import ScheduleCard from '../Schedule/ScheduleCard/ScheduleCard';
+import { loadSlotTypes, selectSlotTypes } from '@/store/slices/slotTypes';
+import {
+  getClosestWeekBeginningBefore,
+  getDaysNumberBetweenDateObjects,
+} from '@/utils';
 
 const Settings = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.user.value);
   const slotRulesState = useSelector(selectSlotRules);
+  const slotTypesState = useSelector(selectSlotTypes);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -31,22 +48,49 @@ const Settings = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const chartData = useMemo(() => {
-    const result = {};
+  const pieChartData = useMemo(() => {
+    const totalDurationBySlotTypeId = {};
 
-    for (const slotRule of slotRulesState.value) {
-      if (result[slotRule.slotType.name] === undefined) {
-        result[slotRule.slotType.name] =
-          slotRule.slotsCount * slotRule.slotType.duration;
-      } else {
-        result[slotRule.slotType.name] +=
-          slotRule.slotsCount * slotRule.slotType.duration;
+    const weekStartDateObject = getClosestWeekBeginningBefore(new Date());
+
+    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+      const currentDateObject = new Date(
+        weekStartDateObject.getFullYear(),
+        weekStartDateObject.getMonth(),
+        weekStartDateObject.getDate() + dayIndex
+      );
+
+      for (const slotRule of slotRulesState.value) {
+        const slotRuleStartDateObject = new Date(slotRule.startDate);
+        const weekIndex = Math.floor(
+          getDaysNumberBetweenDateObjects(
+            getClosestWeekBeginningBefore(slotRuleStartDateObject),
+            currentDateObject
+          ) / 7
+        );
+
+        if (
+          slotRule.dayOfWeekIndexes.includes(currentDateObject.getDay()) &&
+          slotRuleStartDateObject <= currentDateObject &&
+          ((slotRule.frequencyWeeksNumber === null && weekIndex === 0) ||
+            weekIndex % slotRule.frequencyWeeksNumber === 0)
+        ) {
+          const currentDuration =
+            slotRule.slotsCount * slotRule.slotType.duration;
+
+          if (totalDurationBySlotTypeId[slotRule.slotType.id] === undefined) {
+            totalDurationBySlotTypeId[slotRule.slotType.id] = currentDuration;
+          } else {
+            totalDurationBySlotTypeId[slotRule.slotType.id] += currentDuration;
+          }
+        }
       }
     }
 
-    return Object.entries(result).map(([key, value]) => ({
-      name: key,
-      value,
+    return slotTypesState.value.map((mapSlotType) => ({
+      name: mapSlotType.name,
+      value: totalDurationBySlotTypeId[mapSlotType.id] || 0,
+      color: mapSlotType.color,
     }));
   }, [slotRulesState]);
 
@@ -61,6 +105,7 @@ const Settings = () => {
   useEffect(() => {
     dispatch(loadUser());
     dispatch(loadSlotRules());
+    dispatch(loadSlotTypes());
   }, []);
 
   const handleSubmit = async (e) => {
@@ -91,35 +136,33 @@ const Settings = () => {
   }
 
   return (
-    <Grid templateColumns='repeat(2, 1fr)' gap={12} p={8}>
-      <VStack align='start' spacing={6}>
-        <Box
-          borderWidth={1}
-          borderRadius='lg'
-          borderColor='gray.300'
-          p={6}
-          w='100%'
-          boxShadow='xl'
-          bg='white'
-        >
+    <Grid
+      templateColumns='repeat(2, 1fr)'
+      templateRows='1fr 1.5fr 2fr'
+      gap={8}
+      h='full'
+      w='full'
+    >
+      <ScheduleCard gridColumn='1' gridRow='1'>
+        <Stack>
           <Text fontSize='2xl' fontWeight='bold'>
             Your current information
           </Text>
           <Text>Email: {user.email}</Text>
           <Text>First name: {user.firstName}</Text>
           <Text>Last name: {user.lastName}</Text>
-        </Box>
-      </VStack>
-      <VStack as='form' onSubmit={handleSubmit} align='start' spacing={6}>
-        <Box
-          borderWidth={1}
-          borderRadius='lg'
-          borderColor='gray.300'
-          p={6}
-          w='100%'
-          boxShadow='xl'
-          bg='white'
-        >
+        </Stack>
+      </ScheduleCard>
+      <ScheduleCard
+        gridColumn='2'
+        gridRow='1/3'
+        as='form'
+        onSubmit={handleSubmit}
+        display='flex'
+        flexDirection='column'
+        justifyContent='space-between'
+      >
+        <Stack>
           <Text fontSize='2xl' fontWeight='bold'>
             Update your information
           </Text>
@@ -161,44 +204,59 @@ const Settings = () => {
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
-          <Button type='submit' colorScheme='blue' mt={4}>
-            Save changes
-          </Button>
-        </Box>
-      </VStack>
-      <Box
-        borderWidth={1}
-        borderRadius='lg'
-        borderColor='gray.300'
-        p={6}
-        w='100%'
-        boxShadow='xl'
-        bg='white'
-      >
+        </Stack>
+        <Button type='submit' colorScheme='blue' alignSelf='end'>
+          Save changes
+        </Button>
+      </ScheduleCard>
+      <ScheduleCard as={Flex} gridColumn='1' gridRow='2/4' flexDir='column'>
         <Text fontSize='2xl' fontWeight='bold'>
-          Slots statistic
+          Slots composition of the current week
         </Text>
-        <PieChart width={730} height={250}>
-          <Pie
-            data={chartData}
-            dataKey='value'
-            nameKey='name'
-            cx='50%'
-            cy='50%'
-            outerRadius={100}
-            fill='#8884d8'
-            label
-          >
-            {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
+        <Box flexGrow={1} alignSelf='stretch'>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={pieChartData}
+                dataKey='value'
+                nameKey='name'
+                cx='50%'
+                cy='50%'
+                outerRadius='60%'
+              >
+                {pieChartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+                <LabelList dataKey='name' />
+              </Pie>
+              <Tooltip
+                formatter={(value, name) => [`${value} minutes`, name]}
               />
-            ))}
-          </Pie>
-          <Tooltip />
-        </PieChart>
-      </Box>
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+      </ScheduleCard>
+      <ScheduleCard as={Flex} gridColumn='2' gridRow='3/4' flexDir='column'>
+        <Text fontSize='2xl' fontWeight='bold'>
+          Duration of the slot types
+        </Text>
+        <Box flexGrow={1} alignSelf='stretch'>
+          <ResponsiveContainer width='100%' height='100%'>
+            <BarChart
+              data={slotTypesState.value}
+              margin={{ top: 40, left: 20 }}
+            >
+              <YAxis tickFormatter={(value) => `${value} minutes`} />
+              <Bar dataKey='duration' isAnimationActive={false}>
+                {slotTypesState.value.map((entry, index) => (
+                  <Cell fill={entry.color} key={`cell-${index}`} />
+                ))}
+                <LabelList dataKey='name' position='top' />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Box>
+      </ScheduleCard>
     </Grid>
   );
 };

@@ -102,7 +102,10 @@ export class SlotRuleService {
       const slotEnd = slotRule.time + slotRule.slotsCount * slotType.duration;
 
       if ((newSlotStart >= slotStart && newSlotStart < slotEnd) ||
-          (newSlotEnd > slotStart && newSlotEnd <= slotEnd)) {
+          (newSlotEnd > slotStart && newSlotEnd <= slotEnd) ||
+           (slotStart >= newSlotStart && slotStart < newSlotEnd) ||
+           (slotEnd > newSlotStart && slotEnd <= newSlotEnd))
+           {
         throw new Error('The new slot collides with an existing slot');
       }
     }

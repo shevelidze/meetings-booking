@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { SlotRule } from 'src/entity';
+import { SlotRule, SlotType } from 'src/entity';
 import { pick } from 'src/common/utils';
 import { SlotTypeService } from 'src/slot-type';
 import { AuthService } from 'src/auth';
@@ -19,7 +19,9 @@ export class SlotRuleService {
   ) {}
 
   public async create(creation: SlotRuleCreation, userEmail: string) {
+    const slotType = await this.slotTypeService.getOrThrow(creation.slotTypeId);
     const instance = this.slotRuleRepository.create(creation);
+    await this.validateSlotNotColliding(creation, userEmail, slotType);
 
     [instance.slotType, instance.user] = await Promise.all([
       this.slotTypeService.getOrThrow(creation.slotTypeId),
@@ -87,5 +89,22 @@ export class SlotRuleService {
     }
 
     return instance;
+  }
+
+  private async validateSlotNotColliding(creation: SlotRuleCreation, userEmail: string, slotType: SlotType) {
+    const userSlotRules = await this.getAllOwnedByUser(userEmail);
+
+    const newSlotStart = creation.time;
+    const newSlotEnd = creation.time + creation.slotsCount * slotType.duration;
+
+    for (const slotRule of userSlotRules) {
+      const slotStart = slotRule.time;
+      const slotEnd = slotRule.time + slotRule.slotsCount * slotType.duration;
+
+      if ((newSlotStart >= slotStart && newSlotStart < slotEnd) ||
+          (newSlotEnd > slotStart && newSlotEnd <= slotEnd)) {
+        throw new Error('The new slot collides with an existing slot');
+      }
+    }
   }
 }

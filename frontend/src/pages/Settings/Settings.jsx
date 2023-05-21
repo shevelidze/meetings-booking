@@ -53,7 +53,7 @@ const Settings = () => {
 
     const weekStartDateObject = getClosestWeekBeginningBefore(new Date());
 
-    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+    for (let dayIndex = 0; dayIndex <= 7; dayIndex++) {
       const currentDateObject = new Date(
         weekStartDateObject.getFullYear(),
         weekStartDateObject.getMonth(),

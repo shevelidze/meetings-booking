@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { SlotRule } from 'src/entity';
+import { SlotRule, SlotType } from 'src/entity';
 import { pick } from 'src/common/utils';
 import { SlotTypeService } from 'src/slot-type';
 import { AuthService } from 'src/auth';
@@ -25,6 +25,8 @@ export class SlotRuleService {
       this.slotTypeService.getOrThrow(creation.slotTypeId),
       this.authService.getUserOrThrow(userEmail),
     ]);
+
+    await this.validateSlotNotColliding(instance, userEmail);
 
     return this.deleteSensitiveDataFromInstance(
       await this.slotRuleRepository.save(instance),
@@ -61,14 +63,16 @@ export class SlotRuleService {
       return;
     }
 
+
     Object.assign(possibleInstance, update);
+  
 
     if (update.slotTypeId !== undefined) {
       possibleInstance.slotType = await this.slotTypeService.getOrThrow(
         update.slotTypeId,
       );
     }
-
+    await this.validateSlotNotColliding(possibleInstance, userEmail);
     return await this.slotRuleRepository.save(possibleInstance);
   }
 
@@ -87,5 +91,28 @@ export class SlotRuleService {
     }
 
     return instance;
+  }
+
+  private async validateSlotNotColliding(instance: SlotRule, userEmail: string) {
+    const userSlotRules = await this.getAllOwnedByUser(userEmail);
+    const newSlotStart = instance.time;
+    const newSlotEnd = instance.time + instance.slotsCount * instance.slotType.duration;
+
+    for (const slotRule of userSlotRules) {
+      if (!instance.dayOfWeekIndexes.some(index => slotRule.dayOfWeekIndexes.includes(index)) || (slotRule.id === instance.id)) {
+        continue; 
+      }
+      console.log(slotRule, instance);
+
+      const slotStart = slotRule.time;
+      const slotEnd = slotRule.time + slotRule.slotsCount * instance.slotType.duration;
+
+      if ((newSlotStart >= slotStart && newSlotStart < slotEnd) ||
+          (newSlotEnd > slotStart && newSlotEnd <= slotEnd) ||
+          (slotStart >= newSlotStart && slotStart < newSlotEnd) ||
+          (slotEnd > newSlotStart && slotEnd <= newSlotEnd)) {
+        throw new BadRequestException('The new slot collides with an existing slot');
+      }
+    }
   }
 }

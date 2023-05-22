@@ -26,7 +26,7 @@ export default function AppSidebar() {
     >
       <Stack spacing={6}>
         <SidebarItem to='/schedule' icon={BiCalendar} />
-        <SidebarItem to='/vacations' icon={BiCoffee} />
+        {/* <SidebarItem to='/vacations' icon={BiCoffee} /> */}
         <SidebarItem to='/settings' icon={BiCog} />
       </Stack>
       <Stack spacing={6}>

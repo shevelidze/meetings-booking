@@ -54,7 +54,7 @@ export default function SlotTypesScheduleCard(props) {
           color: editedSlotType?.color || newSlotDefaultColor,
         }}
         isOpen={addSlotModalsOpen}
-        onClose={() => setAddSlotModalIsOpen(false)}
+        onClose={() => {setAddSlotModalIsOpen(false); setEditedSlotType(null);}}
         headerChildren={
           editedSlotType === null ? 'Add a new slot type' : 'Edit a slot type'
         }

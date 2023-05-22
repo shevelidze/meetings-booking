@@ -5,7 +5,11 @@ export const slotRuleService = {
     const response = await apiService.fetchJson('POST', '/slot_rule', creation);
 
     if (!response.ok) {
-      throw new Error('Failed to create a slot rule.');
+      if (response.status === 400) {
+        throw new Error((await response.json())?.message);
+      } else {
+        throw new Error('Failed to create a slot rule.');
+      }
     }
 
     return await response.json();
@@ -27,7 +31,11 @@ export const slotRuleService = {
     );
 
     if (!response.ok) {
-      throw new Error('Failed to update a slot rule.');
+      if (response.status === 400) {
+        throw new Error((await response.json())?.message);
+      } else {
+        throw new Error('Failed to update a slot rule.');
+      }
     }
 
     return await response.json();

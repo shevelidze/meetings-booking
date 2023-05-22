@@ -57,21 +57,21 @@ export default function SlotRuleFormModal({
   const slotTypesState = useSelector(selectSlotTypes);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalCloseButton />
-        <ModalHeader>{headerChildren}</ModalHeader>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={(values, { resetForm }) => {
-            onSubmit(values);
-            resetForm();
-          }}
-          enableReinitialize
-        >
-          {({ isValid, values, setFieldValue, errors }) => (
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={(values, { resetForm }) => {
+        onSubmit(values);
+        resetForm();
+      }}
+      enableReinitialize
+    >
+      {({ isValid, values, setFieldValue, errors, resetForm }) => (
+        <Modal isOpen={isOpen} onClose={() => { resetForm(); onClose(); }} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalCloseButton />
+            <ModalHeader>{headerChildren}</ModalHeader>
             <Form>
               <ModalBody>
                 <Stack spacing={4}>
@@ -161,9 +161,9 @@ export default function SlotRuleFormModal({
                 </Button>
               </ModalFooter>
             </Form>
-          )}
-        </Formik>
-      </ModalContent>
-    </Modal>
+          </ModalContent>
+        </Modal>
+      )}
+    </Formik>
   );
 }

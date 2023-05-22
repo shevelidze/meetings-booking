@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AddIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -19,15 +19,22 @@ import GhostIconButton from '@/components/common/GhostIconButton';
 import SlotRuleFormModal from '../SlotRuleFormModal/SlotRuleFormModal';
 import ScheduleCard from '../ScheduleCard';
 import SlotRuleItem from '../SlotRuleItem';
-import { Stack } from '@chakra-ui/react';
+import { Stack, useToast } from '@chakra-ui/react';
 
 export default function SlotRulesScheduleCard(props) {
   const dispatch = useDispatch();
+  const toast = useToast();
   const slotTypesState = useSelector(selectSlotTypes);
   const slotRulesState = useSelector(selectSlotRules);
 
   const [addSlotRuleModalIsOpen, setAddSlotRuleModalIsOpen] = useState(false);
   const [editedSlotRule, setEditedSlotRule] = useState(null);
+  useEffect(() => {
+    if (slotRulesState.error !== null) {
+      toast({ status: "error", title: slotRulesState.error })
+    }
+  }, [slotRulesState]
+  );
 
   return (
     <ScheduleCard display='flex' flexGrow={1} flexDirection='column' {...props}>
@@ -73,12 +80,12 @@ export default function SlotRulesScheduleCard(props) {
               : null,
         }}
         isOpen={addSlotRuleModalIsOpen}
-        onClose={() => setAddSlotRuleModalIsOpen(false)}
+        onClose={() => {setAddSlotRuleModalIsOpen(false); setEditedSlotRule(null);}}
         headerChildren={
           editedSlotRule !== null ? 'Edit a slot rule' : 'Add a new slot rule'
         }
         submitButtonChildren='Submit'
-        onSubmit={(values) => {
+        onSubmit={(values) => { 
           setAddSlotRuleModalIsOpen(false);
 
           if (editedSlotRule !== null) {
